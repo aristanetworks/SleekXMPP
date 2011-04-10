@@ -1,2 +1,5 @@
 *.pyc
+*.pyo
 build/
+*~
+NoA4ContentCheck
