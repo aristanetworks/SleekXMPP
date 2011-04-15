@@ -121,7 +121,8 @@ class xep_0045(base.base_plugin):
         self.xmpp.registerHandler(Callback('MUCPresence', MatchXMLMask("<presence xmlns='%s' />" % self.xmpp.default_ns), self.handle_groupchat_presence))
         self.xmpp.registerHandler(Callback('MUCMessage', MatchXMLMask("<message xmlns='%s' type='groupchat'><body/></message>" % self.xmpp.default_ns), self.handle_groupchat_message))
         self.xmpp.registerHandler(Callback('MUCSubject', MatchXMLMask("<message xmlns='%s' type='groupchat'><subject/></message>" % self.xmpp.default_ns), self.handle_groupchat_subject))
-        self.xmpp.registerHandler(Callback('MUCInvite', MatchXPath("{%s}message/{http://jabber.org/protocol/muc#user}x/invite" % self.xmpp.default_ns), self.handle_groupchat_invite))
+        # XXX_AARONB: clean this up
+        self.xmpp.registerHandler(Callback('MUCInvite', MatchXPath("{%s}message/{http://jabber.org/protocol/muc#user}x/{http://jabber.org/protocol/muc#user}invite" % self.xmpp.default_ns), self.handle_groupchat_invite))
 
     def handle_groupchat_invite(self, inv):
         """ Handle an invite into a muc.
@@ -217,6 +218,7 @@ class xep_0045(base.base_plugin):
     def joinMUC(self, room, nick, maxhistory="0", password='', wait=False, pstatus=None, pshow=None):
         """ Join the specified room, requesting 'maxhistory' lines of history.
         """
+        room = str(room)
         stanza = self.xmpp.makePresence(pto="%s/%s" % (room, nick), pstatus=pstatus, pshow=pshow)
         x = ET.Element('{http://jabber.org/protocol/muc}x')
         if password:
